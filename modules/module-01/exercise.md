@@ -26,11 +26,14 @@ A bounded context is a part of the system that has a clear responsibility and ow
 
 For each bounded context you identify, fill in the table:
 
-| Bounded Context | Responsibilities                                         | Owned Entities | Team        |
-| --------------- | -------------------------------------------------------- | -------------- | ----------- |
-| Identity        | Manages who users are, handles registration and profiles | User, Session  | Platform    |
-| Game Library    | _(fill in)_                                              | _(fill in)_    | _(fill in)_ |
-| _(add more)_    |                                                          |                |             |
+| Bounded Context     | Responsibilities                                | Owned Entities     | Team         |
+| ------------------- | ----------------------------------------------- | ------------------ | ------------ |
+| Identity            | Manages users, registration, profiles, auth     | User, Session      | Platform     |
+| Game Library        | Stores and manages game catalogue data          | Game               | Catalogue    |
+| Activity Tracking   | Records gameplay activities and user actions    | Activity           | Social       |
+| Notifications       | Sends and manages user notifications            | Notification       | Social       |
+| Logging             | Stores GDPR consent and activity logs           | ConsentLog         | Compliance   |
+| API Gateway         | Routes requests and validates JWT tokens        | None               | Platform     |
 
 There is no single correct answer: what matters is that you can justify each row.
 
@@ -56,6 +59,30 @@ Payload: { activity_id, user_id, action, game_id, timestamp }
 
 Focus on the flows that feel non-obvious. You do not need to document every possible pair.
 
+activity-service → notification-service
+Trigger: a user logs an activity
+Protocol: RabbitMQ message (async)
+Payload: { activity_id, user_id, game_id, action, timestamp }
+
+gateway → user-service
+Trigger: frontend requests user profile data
+Protocol: REST
+Payload: { user_id }
+
+gateway → game-service
+Trigger: frontend requests game catalogue
+Protocol: REST
+Payload: { game_id, title }
+
+gateway → auth-service
+Trigger: user accesses a protected endpoint
+Protocol: REST + JWT validation
+Payload: { access_token }
+
+activity-service → game-service
+Trigger: activity-service needs game details for activity feed
+Protocol: REST
+Payload: { game_id }
 ---
 
 ## Task 3 — Draw the service map _(~20 min)_
