@@ -1,10 +1,20 @@
-# Application layer — business logic.
-#
-# Calls repository functions and returns Pydantic schemas (not raw ORM objects).
-# Raises ValueError when a game is not found — routes.py turns it into a 404.
-#
-# Implement these four functions:
-# - add_game(db, data) -> GameOut
-# - fetch_game(db, game_id) -> GameOut        (raises ValueError if not found)
-# - fetch_all_games(db, limit, offset) -> GameList
-# - find_games(db, q, limit, offset) -> GameList   (delegates to search_games in repository)
+from sqlalchemy.orm import Session
+
+from app import repository
+from app.schemas import GameCreate
+
+
+def add_game(db: Session, data: GameCreate):
+    return repository.create_game(db, data)
+
+
+def fetch_game(db: Session, game_id: str):
+    return repository.get_game(db, game_id)
+
+
+def fetch_all_games(db: Session):
+    return repository.list_games(db)
+
+
+def search_for_games(db: Session, q: str):
+    return repository.search_games(db, q)
