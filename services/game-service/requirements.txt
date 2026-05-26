@@ -1,7 +1,10 @@
 fastapi
-uvicorn[standard]
+uvicorn
 sqlalchemy
-alembic
 pydantic
-python-dotenv
+alembic
+pytest
 aiosqlite
+ruff
+mypy
+httpx

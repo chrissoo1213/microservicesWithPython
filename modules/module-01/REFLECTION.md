@@ -4,8 +4,8 @@
 
 # Module 1 — Reflection
 
-**Team name**: **\*\***\_\_\_**\*\***
-**Branch**: `module-01/<team-name>`
+**Team name**: Bahjat
+**Branch**: `module-01/<bahjat>`
 **Submitted**: before Module 2 lesson
 
 ---
@@ -22,8 +22,8 @@ You started from a painful monolith. Now you're splitting it into separate servi
 
 Think about it from three angles: the developer who has to change code, the team that has to deploy it, and the user who has to live with its failures. You don't need to cover all three, pick the one that felt most real to you today.
 
-> _Your answer:_
-Splitting the monolith into microservices makes the system easier to maintain and deploy. Developers can work on one service without affecting the whole application, and if one service crashes the entire platform does not necessarily go down.
+> Splitting the app solves the problem of deployment crashes and tight coupling. From a user's perspective, if the Game Library goes offline because of a bug or an update, the whole platform doesn't crash. They can still log in, view their profile, and chat with friends because the Identity and Activity services are running independently.
+
 ---
 
 ## 2. Your choice
@@ -34,8 +34,8 @@ Look at your service map. Every arrow between two services is a decision someone
 
 What would break, slow down, or become harder to manage if you merged those two services back together?
 
-> _Your answer:_
-I separated notification-service from activity-service because notifications can become heavy under high traffic. If both were merged together, notification issues could slow down or block activity logging for users.
+>I separated the Activity service from the Notification service. In the monolith, these were tightly coupled, meaning when a user logged a game, the system paused to write notifications for all their friends before finishing the request. By separating them and using an async event, logging an activity is instant, and notifications are processed safely in the background.
+
 ---
 
 ## 3. The tradeoff
@@ -46,8 +46,8 @@ Microservices solve the monolith's problems. But they create new ones.
 
 No need to solve it: just name it honestly. This is exactly the tension the rest of the course is about.
 
-> _Your answer:_
-The monolith was simpler because everything was in one project and one database. With microservices, communication between services, debugging, deployment, and infrastructure become more complicated.
+>Data querying is much harder now. In the monolith, if I wanted to show an activity feed, I could just write a single SQL JOIN to get the user's name, the game title, and the activity. Now, that data is locked in three different databases, requiring multiple network calls between services just to render one page.
+
 ---
 
 _Keep this file. You will refer back to it during the oral presentation._
