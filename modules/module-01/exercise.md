@@ -1,7 +1,7 @@
 # Module 1 — Service Decomposition
 
 **Duration**: 2h in class
-**Branch to submit**: `module-01/<bahjat>`
+**Branch to submit**: `module-01/<gamers>`
 
 ---
 
