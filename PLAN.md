@@ -11,14 +11,14 @@ Reframe the 10-module course into an assessable arc:
 
 | Checkpoint | Format | Submitted |
 |---|---|---|
-| Module 1 | branch `module-01/team-name` + REFLECTION.md | before Module 2 lesson |
-| Module 2 | branch `module-02/team-name` + REFLECTION.md | before Module 3 lesson |
-| Module 3 | branch `module-03/team-name` + REFLECTION.md | before Module 4 lesson |
-| Module 4 | branch `module-04/team-name` + REFLECTION.md | before Module 5 lesson |
-| Module 5 | branch `module-05/team-name` + REFLECTION.md | before Module 6 lesson |
-| Module 6 | branch `module-06/team-name` + REFLECTION.md | before Module 7 lesson |
-| Module 7 | branch `module-07/team-name` + REFLECTION.md | before Module 8 lesson |
-| Module 8 | branch `module-08/team-name` + REFLECTION.md | before final session |
+| Module 1 | branch `module-01/gamers` + REFLECTION.md | before Module 2 lesson |
+| Module 2 | branch `module-02/gamers` + REFLECTION.md | before Module 3 lesson |
+| Module 3 | branch `module-03/gamers` + REFLECTION.md | before Module 4 lesson |
+| Module 4 | branch `module-04/gamers` + REFLECTION.md | before Module 5 lesson |
+| Module 5 | branch `module-05/gamers` + REFLECTION.md | before Module 6 lesson |
+| Module 6 | branch `module-06/gamers` + REFLECTION.md | before Module 7 lesson |
+| Module 7 | branch `module-07/gamers` + REFLECTION.md | before Module 8 lesson |
+| Module 8 | branch `module-08/gamers` + REFLECTION.md | before final session |
 | Final | Oral presentation (15 min/group) | last session |
 
 ## Reflection Template (same structure every module)
