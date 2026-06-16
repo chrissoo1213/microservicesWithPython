@@ -1,7 +1,7 @@
 # Module 1 — Service Decomposition
 
 **Duration**: 2h in class
-**Branch to submit**: `module-01/<gamers>`
+**Branch to submit**: `module-01/<team-name>`
 
 ---
 
@@ -26,13 +26,11 @@ A bounded context is a part of the system that has a clear responsibility and ow
 
 For each bounded context you identify, fill in the table:
 
-| Bounded Context | Responsibilities | Owned Entities | Team |
-| Identity | Manages who users are, handles registration and profiles | User, Session | Platform |
-| Game Library | Manages the catalog of games, titles, and genres | Game, Category | Content |
-| Activity | Manages social feeds, friendships, and logging what people play | Activity, Friendship | Social |
-| Notification | Manages delivering alerts and messages to users | Notification, DeviceToken | Communications |
-| Logging | Records system events, checks GDPR consent | Log, ConsentRecord | Infra |
-
+| Bounded Context | Responsibilities                                         | Owned Entities | Team        |
+| --------------- | -------------------------------------------------------- | -------------- | ----------- |
+| Identity        | Manages who users are, handles registration and profiles | User, Session  | Platform    |
+| Game Library    | _(fill in)_                                              | _(fill in)_    | _(fill in)_ |
+| _(add more)_    |                                                          |                |             |
 
 There is no single correct answer: what matters is that you can justify each row.
 
@@ -58,24 +56,6 @@ Payload: { activity_id, user_id, action, game_id, timestamp }
 
 Focus on the flows that feel non-obvious. You do not need to document every possible pair.
 
-Contract 1:
-identity-service → activity-service
-Trigger: a user logs in successfully
-Protocol: RabbitMQ message (async)
-Payload: { user_id, session_id, timestamp }
-
-Contract 2:
-activity-service → notification-service
-Trigger: a user earns an achievement or milestone
-Protocol: RabbitMQ message (async)
-Payload: { user_id, achievement_id, message, timestamp }
-
-Contract 3:
-gateway → identity-service
-Trigger: a client sends a login or registration request
-Protocol: REST (sync)
-Payload: { username, email, password_hash }
-
 ---
 
 ## Task 3 — Draw the service map _(~20 min)_
@@ -89,15 +69,6 @@ Draw the full GameHub service map:
 
 This can be a sketch on paper, a whiteboard photo, or ASCII art committed to your branch.
 
-             [Client]
-                |
-           [Gateway]
-        _____|__|__|__|_____
-        |    |  |  |      |
-    [identity][game][activity][notification][logging]
-        |_async__|    |___async___|___async___|
-
-
 ---
 
 ## Discussion _(~15 min)_
@@ -105,14 +76,8 @@ This can be a sketch on paper, a whiteboard photo, or ASCII art committed to you
 Three questions to discuss as a team before you leave:
 
 1. Why does `notification-service` use Node.js instead of Python like the rest? What does that tell you about microservices and technology choices?
-Because node handles lots of simultaneous I/O better. Each service can use whatever language fits its job.
-
 2. What is the risk of `activity-service` calling `logging-service` synchronously — why might you prefer an async event instead?
-if logging-service crashes, activity-service crashes too. Async decouples them.
-
 3. Why does `logging-service` need a GDPR consent check before recording any activity?
-you can't store personal data without consent. Logging is the last gate before data is written.
-
 
 You do not need to write these answers down — they are warm-up for your REFLECTION.md.
 
@@ -126,3 +91,198 @@ You do not need to write these answers down — they are warm-up for your REFLEC
 - [ ] `REFLECTION.md` completed and committed
 
 The map does not need to be perfect. It needs to be yours.
+
+
+
+
+
+# Answers:
+
+# Task 1 — Bounded Contexts
+
+| Bounded Context       | Responsibilities                                              | Owned Entities                    | Team           |
+| --------------------- | ------------------------------------------------------------- | --------------------------------- | -------------- |
+| Identity              | Handles login, registration, JWT authentication, and profiles | User, Session, Token              | Platform       |
+| Game Library          | Stores and manages game information                           | Game, Genre, Platform             | Content        |
+| Social Graph          | Manages friends, follows, and social connections              | Friendship, Follow, FriendRequest | Social         |
+| Activity Tracking     | Tracks what users are playing and gameplay activity           | Activity, PlaySession             | Engagement     |
+| Recommendation Engine | Creates personalized game recommendations                     | Recommendation, UserPreference    | Discovery      |
+| Notification          | Sends notifications to users                                  | Notification, DeliveryStatus      | Communications |
+| Logging & Consent     | Stores GDPR consent and activity logs                         | ConsentRecord, AuditLog           | Compliance     |
+
+# Task 2 — Service Contracts
+
+1.
+
+activity-service → logging-service
+
+Trigger: User starts or stops playing a game
+
+Protocol: RabbitMQ event (async)
+
+Payload:
+{
+activity_id,
+user_id,
+game_id,
+action,
+timestamp
+}
+
+Reason:
+Async messaging prevents gameplay actions from slowing down if logging-service is busy.
+
+---
+
+2.
+
+activity-service → notification-service
+
+Trigger: Friend activity detected
+
+Protocol: RabbitMQ event (async)
+
+Payload:
+{
+user_id,
+friend_id,
+game_title,
+activity_type
+}
+
+Reason:
+Notifications are background tasks and should not block the main request.
+
+---
+
+3.
+
+gateway → auth-service
+
+Trigger: User login request
+
+Protocol: REST (sync)
+
+Payload:
+{
+email,
+password
+}
+
+Response:
+{
+access_token,
+refresh_token,
+expires_in
+}
+
+Reason:
+The user needs an immediate response for login authentication.
+
+---
+
+4.
+
+recommendation-service → activity-service
+
+Trigger: Generate recommendations
+
+Protocol: REST (sync)
+
+Payload:
+{
+user_id,
+recent_limit
+}
+
+Reason:
+Recommendations require recent gameplay data immediately.
+
+# Task 3 — Service Map
+
+                              +----------------------+
+                              |       gateway        |
+                              | FastAPI API Gateway  |
+                              +----------+-----------+
+                                         |
+   --------------------------------------------------------------------------------
+   |                     |                    |                  |                |
+   v                     v                    v                  v                v
+
++----------------+  +----------------+  +----------------+  +----------------+  +----------------+
+| user-service   |  | game-service   |  | activity-serv  |  | auth-service   |  | logging-serv   |
+| FastAPI        |  | FastAPI        |  | FastAPI        |  | FastAPI        |  | Flask          |
+| SQLite/Postgres|  | SQLite/Postgres|  | SQLite/Postgres|  | SQLite/Postgres|  | SQLAlchemy     |
++--------+-------+  +--------+-------+  +--------+-------+  +--------+-------+  +--------+-------+
+         |                   |                   |                                        ^
+         |                   |                   |                                        |
+         |                   |                   | REST: consent check                   |
+         |                   |                   +----------------------------------------+
+         |                   |
+         |                   |
+         |                   | REST: fetch game summary
+         |                   +<------------------------------------+
+         |                                                        |
+         |                                                        |
+         |                                           +------------+------------+
+         |                                           | recommendation-service |
+         |                                           | Personalized discovery |
+         |                                           +------------+------------+
+         |                                                        |
+         |                                                        | REST: recent activity
+         |                                                        |
+         |                                                        v
+         |                                           +-------------------------+
+         |                                           |    activity-service     |
+         |                                           +-------------------------+
+
+                                           - - - - - - - - - - - - - - - -
+                                           RabbitMQ async events
+                                           - - - - - - - - - - - - - - - -
+
+                                                +----------------------+
+                                                | notification-service |
+                                                | Node.js + SQLite     |
+                                                +----------------------+
+                                                         ^
+                                                         |
+                                                         |
+                                    activity.logged event |
+                                                         |
+                                                         |
+                                                +----------------------+
+                                                |   activity-service   |
+                                                +----------------------+
+
+                                                         |
+                                                         | activity.logged event
+                                                         v
+
+                                                +----------------------+
+                                                |   logging-service    |
+                                                | Flask + SQLAlchemy   |
+                                                +----------------------+
+
+
+Legend
+------
+------>  REST / synchronous communication
+- - ->   RabbitMQ async event
+
+# REFLECTION.md
+
+1. Why does notification-service use Node.js?
+
+Notification-service uses Node.js because notifications are event-driven and require fast non-blocking operations. This shows that microservices can use different technologies depending on their purpose.
+
+---
+
+2. Why use async events between activity-service and logging-service?
+
+Async events prevent delays in gameplay actions. If logging-service is unavailable, RabbitMQ can queue the messages instead of failing the request.
+
+---
+
+3. Why does logging-service need GDPR consent?
+
+User activity data is personal information. GDPR requires user consent before tracking actions. Without consent, activity should not be stored.

@@ -1,7 +1,7 @@
 # Module 3 — Reflection
 
-**Team name**: bahjat
-**Branch**: `module-03/<bahjat>`
+**Team name**: _______________
+**Branch**: `module-03/<team-name>`
 **Submitted**: before Module 4 lesson
 
 ---
@@ -18,7 +18,8 @@ All client requests now go through the gateway. No client ever calls a service d
 
 Think about what the client would need to know and manage if it talked to each service on its own port.
 
-> Without the gateway, the client would need to know the port of every service, manage multiple base URLs, and handle failures for each one separately. If a service moves or changes port, every client breaks. The gateway is a single stable entry point — the client only ever needs to know port 8000.
+> *Your answer:
+The gateway exists to give clients a single entry point to the system. Without it, the frontend would need to know the address and port of every service, such as user-service, game-service, and activity-service. If a service changed ports or moved to another machine, the client would also need to change. The gateway hides this complexity and handles routing in one place.*
 
 ---
 
@@ -30,7 +31,10 @@ The activity-service makes two outbound calls: one to validate the user (with re
 
 What is the consequence for the user in each case if the downstream service is unavailable?
 
-> User validation is critical — if the user doesn't exist, saving the activity makes no sense. The request must fail. Game enrichment is optional — the activity is valid without it. If game-service is down, the user still logged their activity successfully. Failing the whole request just because enrichment failed would be a bad user experience.
+> *Your answer:
+The user validation call is critical because activities should not be created for users that do not exist. If validation fails, the activity must not be saved because it would create invalid data. That is why the service retries once before failing.
+
+The game data call is optional because the activity can still exist without extra game details. If game-service is unavailable, the activity is still saved and the response simply returns "game": null. This gives a better user experience because the main action still succeeds.*
 
 ---
 
@@ -42,7 +46,10 @@ Every time a client creates an activity, three services are involved synchronous
 
 What happens to the user experience if the slowest service in the chain takes 3 seconds to respond?
 
-> If any service in the chain is slow, the entire response is slow. A 3-second delay in user-service means the client waits 3 seconds minimum before getting anything back. With synchronous chaining, the slowest service sets the response time for everyone.
+> *Your answer:
+The risk of synchronous communication is that every service depends on the others being available and fast. If one service becomes slow or crashes, the whole request is delayed or fails.
+
+If three services each take 1 second, the user may wait around 3 seconds for a response. If one service takes even longer, the entire request becomes slower. If one service goes down completely, the request may fail entirely, even if the other services are working.*
 
 ---
 

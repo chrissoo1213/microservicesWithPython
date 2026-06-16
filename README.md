@@ -47,20 +47,20 @@ services/    ← you build these from Module 2 onward
 
 | Submission | What | Deadline |
 |---|---|---|
-| `module-01/<gamers>` | Design + REFLECTION.md | Before Module 2 lesson |
-| `module-02/<gamers>` | Code + REFLECTION.md | Before Module 3 lesson |
-| `module-03/<gamers>` | Code + REFLECTION.md | Before Module 4 lesson |
-| `module-04/<gamers>` | Code + REFLECTION.md | Before Module 5 lesson |
-| `module-05/<gamers>` | Code + REFLECTION.md | Before Module 6 lesson |
-| `module-06/<gamers>` | Code + REFLECTION.md | Before Module 7 lesson |
-| `module-07/<gamers>` | Code + REFLECTION.md | Before Module 8 lesson |
-| `module-08/<gamers>` | Code + REFLECTION.md | Before final session |
+| `module-01/<team-name>` | Design + REFLECTION.md | Before Module 2 lesson |
+| `module-02/<team-name>` | Code + REFLECTION.md | Before Module 3 lesson |
+| `module-03/<team-name>` | Code + REFLECTION.md | Before Module 4 lesson |
+| `module-04/<team-name>` | Code + REFLECTION.md | Before Module 5 lesson |
+| `module-05/<team-name>` | Code + REFLECTION.md | Before Module 6 lesson |
+| `module-06/<team-name>` | Code + REFLECTION.md | Before Module 7 lesson |
+| `module-07/<team-name>` | Code + REFLECTION.md | Before Module 8 lesson |
+| `module-08/<team-name>` | Code + REFLECTION.md | Before final session |
 | Oral presentation | 15 min/group, live | Final session |
 
 ### Branch naming
 
 ```bash
-git checkout -b module-01/your-gamers
+git checkout -b module-01/your-team-name
 ```
 
 One branch per module. Each branch includes the code produced during that lesson **and** a completed `REFLECTION.md`.

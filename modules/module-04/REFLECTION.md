@@ -1,7 +1,7 @@
 # Module 4 — Reflection
 
-**Team name**: gamers
-**Branch**: `module-04/<gamers>`
+**Team name**: _______________
+**Branch**: `module-04/<team-name>`
 **Submitted**: before Module 5 lesson
 
 ---
@@ -18,8 +18,10 @@ In Module 3, services called each other directly over HTTP. Now activity-service
 
 Think about what happens under load, or when notification-service is temporarily down.
 
-> activity-service gains speed — it saves the activity and moves on instantly without waiting for notification-service to respond. notification-service gains resilience — if it's temporarily down, messages pile up in the queue and get processed when it comes back. Under load, neither service blocks the other.
+> *Your answer:
+By not waiting for the notification service, the activity-service can respond faster and continue working even if notifications are slow or temporarily unavailable. Under heavy load, activity creation is not blocked by notification processing.
 
+The notification-service also benefits because it can consume messages at its own pace. If it goes down, messages remain in RabbitMQ and can be processed when the service comes back online.*
 
 ---
 
@@ -31,8 +33,10 @@ In Module 3 you already knew how to call another service directly over HTTP — 
 
 Think about what happens if notification-service is slow, or crashes mid-message.
 
-> A direct HTTP call would mean activity-service waits for notification-service to respond. If notification-service is slow, the whole activity request slows down. If it crashes mid-call, the notification is lost. The broker decouples them — the message is safely stored in RabbitMQ even if notification-service is down, and it will be delivered when it recovers.
+> *Your answer:
+A direct HTTP call would make activity-service dependent on notification-service being available and responsive. If notification-service is slow or crashes, activity creation could be delayed or fail.
 
+Using a broker decouples the services. Activity-service only needs RabbitMQ to accept the message, and multiple services can consume the same event without changing the activity-service code.*
 
 ---
 
@@ -44,8 +48,10 @@ With synchronous REST, you get an immediate answer: success or failure. With asy
 
 What visibility do you lose when you go async?
 
-> A user would never know — there's no feedback in the activity response about whether the notification was delivered. As a developer, you'd have to check RabbitMQ logs or add separate monitoring. You lose the immediate success/failure signal you get with REST. If the message is consumed but something fails inside notification-service, you'd need dead letter queues or logging to even detect it.
+> *Your answer:
+The user would usually not know immediately that a notification was never delivered because activity creation still succeeds. As a developer, I would need logs, monitoring, queue metrics, or failed-message tracking to detect delivery problems.
 
+With asynchronous messaging, we lose immediate confirmation that the notification was successfully processed. We only know that the message was published to the broker, not that a consumer handled it successfully.*
 
 ---
 

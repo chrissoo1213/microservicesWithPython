@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+
 from app.models import Activity
 from app.schemas import ActivityCreate
+
 
 def create_activity(db: Session, data: ActivityCreate) -> Activity:
     activity = Activity(
@@ -14,12 +16,15 @@ def create_activity(db: Session, data: ActivityCreate) -> Activity:
     db.refresh(activity)
     return activity
 
-def list_activities(db: Session, limit: int = 20, offset: int = 0):
-    total = db.query(Activity).count()
-    items = db.query(Activity).offset(offset).limit(limit).all()
-    return items, total
 
-def list_activities_by_user(db: Session, user_id: str, limit: int = 20, offset: int = 0):
-    total = db.query(Activity).filter(Activity.user_id == user_id).count()
-    items = db.query(Activity).filter(Activity.user_id == user_id).offset(offset).limit(limit).all()
-    return items, total
+def list_activities(db: Session, limit: int = 20, offset: int = 0) -> tuple[list[Activity], int]:
+    total = db.query(Activity).count()
+    activities = db.query(Activity).order_by(Activity.created_at.desc()).offset(offset).limit(limit).all()
+    return activities, total
+
+
+def list_user_activities(db: Session, user_id: str, limit: int = 20, offset: int = 0) -> tuple[list[Activity], int]:
+    q = db.query(Activity).filter(Activity.user_id == user_id)
+    total = q.count()
+    activities = q.order_by(Activity.created_at.desc()).offset(offset).limit(limit).all()
+    return activities, total

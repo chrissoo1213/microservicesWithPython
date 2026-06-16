@@ -1,7 +1,7 @@
 # Module 2 — Reflection
 
-**Team name**: gamers
-**Branch**: `module-02/<gamers>`
+**Team name**: _______________
+**Branch**: `module-02/<team-name>`
 **Submitted**: before Module 3 lesson
 
 ---
@@ -18,7 +18,8 @@ You built a service with distinct layers: models, schemas, repository, service, 
 
 Think about what happens six months later when someone new joins the team, or when you need to swap SQLite for PostgreSQL. What does the layered structure protect you from?
 
-> Splitting the code into layers protects the application from massive rewrites. If we decide to swap from SQLite to PostgreSQL later, we only have to update the repository.py and database.py files. The routing (routes.py) and business logic (service.py) don't care what database is used, so they remain completely untouched. It also makes testing easier because you can test business logic without needing a live database.
+> *Your answer:
+Putting everything in one file might work for a very small project, but it becomes difficult to manage as the application grows. Separating models, schemas, repositories, services, and routes keeps responsibilities clear and makes the code easier to maintain. For example, if we switch from SQLite to PostgreSQL later, most changes would stay inside the database and repository layers without affecting the API routes or business logic. It also helps new developers understand the project faster because each file has a clear purpose instead of mixing database logic, validation, and HTTP handling together.*
 
 ---
 
@@ -30,7 +31,8 @@ Each service owns its data exclusively — no other service is allowed to touch 
 
 Give a concrete scenario, not a general principle.
 
-> If the Activity Service was allowed to write directly to the games table in the Game Service database, it might bypass important validation rules (like adding a game without a cover_url). Even worse, if the Game Service team updates their database schema (like changing the column name title to game_name), the Activity Service's hardcoded SQL query would instantly break and crash without the Game Service team even knowing why.
+> *Your answer:
+The Game entity is owned by game-service. If another service could write directly to the games table, it could accidentally create inconsistent or invalid data. For example, if activity-service directly inserted a game with missing fields or the wrong platform value, users might see broken game information in recommendations or activity feeds. By forcing all writes to go through game-service, validation and business rules stay consistent.*
 
 ---
 
@@ -42,7 +44,8 @@ You now have models, schemas, a repository, a service, and routes — five layer
 
 And at what point does the complexity start to pay off? Where is the tipping point?
 
->The cost is massive boilerplate. To do a simple SELECT * FROM games, you have to write code across five different files, which feels incredibly slow for a basic CRUD app. This complexity only pays off when the app scales — when you start adding caching, role-based permissions, or external API calls, having dedicated layers keeps the codebase from turning into spaghetti.
+> *Your answer:
+The main cost of this structure is extra complexity and more files to manage. However, the structure starts paying off once the project grows, multiple developers work on it, or business logic becomes more complicated. At that point, keeping responsibilities separated makes debugging, testing, and adding features much easier. The tipping point is usually when the project stops being a small prototype and starts evolving into a real multi-service application with long-term maintenance needs.*
 
 ---
 

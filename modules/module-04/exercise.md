@@ -1,7 +1,7 @@
 # Module 4 — Asynchronous Messaging
 
 **Duration**: 2h in class
-**Branch to submit**: `module-04/gamers`
+**Branch to submit**: `module-04/<team-name>`
 
 ---
 
@@ -89,8 +89,11 @@ curl http://localhost:8000/v1/notifications
 ## Discussion *(~15 min)*
 
 - What happens to the activity request if `notification-service` is down when the message is published? Should the activity creation fail?
+No. The activity is already saved, and notifications are treated as a non-critical side effect. If RabbitMQ is available, the message stays in the queue until the notification service comes back. If RabbitMQ is unavailable, the error is logged and the activity request still succeeds.
 - In Module 3, you called `game-service` directly over HTTP to enrich the response. Why not do the same for notifications — why introduce a broker at all?
+A broker decouples the services. activity-service only publishes an event and doesn't depend on notification-service being online. It also allows multiple consumers (notifications, logging, etc.) to receive the same event without changing the activity service.
 - The activity is saved and the message is sent — but you have no confirmation the notification was delivered. What visibility do you lose compared to a synchronous call?
+With a synchronous HTTP call, you know immediately whether the notification was processed successfully. With RabbitMQ, you only know the message was accepted by the broker—you don't know whether the consumer actually processed or delivered the notification.
 
 ---
 
